@@ -1,35 +1,51 @@
 #include <Arduino.h>
-#include <I2S.h>
-#include <math.h>
+#include "Config.h"
+#include "SPIFFS.h"
+#include "Audio.h"
+#include "Alarm.h"
+#include "WiFiMulti.h"
 
-const int SAMPLE_RATE = 44100; 
-const int AMPLITUDE = 30000;   
-const float FREQUENCY = 1000.0; 
+
+WiFiMulti wifiMulti;
+Alarm *my_alarm;
+Audio audioC;
+
 
 void setup() {
-  Serial.begin(115200);
-
-  if (!I2S.begin(I2S_PHILIPS_MODE, SAMPLE_RATE, 16)) {
-    Serial.println("Erreur : impossible de démarrer l'I2S.");
-    while (1);  
-  }
-
-  Serial.println("I2S démarré avec succès !");
+    Serial.begin(115200);
+    my_alarm = new Alarm(uint8_t(I2S_BCLK),uint8_t(I2S_LRC), uint8_t(I2S_DOUT), &audioC);
 }
 
-void loop() {
-  const int SAMPLES_PER_CYCLE = SAMPLE_RATE / FREQUENCY;  
-  int16_t sampleBuffer[SAMPLES_PER_CYCLE * 2];  
-  
-  for (int i = 0; i < SAMPLES_PER_CYCLE; i++) {
-    float theta = (2.0 * M_PI * i) / SAMPLES_PER_CYCLE;
-    int16_t sample = (int16_t)(AMPLITUDE * sin(theta));
-    
-    sampleBuffer[2 * i] = sample;      // Canal gauche
-    sampleBuffer[2 * i + 1] = sample;  // Canal droit
-  }
+void loop()
+{
+    my_alarm->ring();
+    delay(10000);
+    my_alarm->stop();
+}
 
-  while (true) {
-    I2S.write((uint8_t*)sampleBuffer, sizeof(sampleBuffer));
-  }
+// optional
+void audio_info(const char *info){
+    Serial.print("info        "); Serial.println(info);
+}
+void audio_id3data(const char *info){  //id3 metadata
+    Serial.print("id3data     ");Serial.println(info);
+}
+
+void audio_showstation(const char *info){
+    Serial.print("station     ");Serial.println(info);
+}
+void audio_showstreamtitle(const char *info){
+    Serial.print("streamtitle ");Serial.println(info);
+}
+void audio_bitrate(const char *info){
+    Serial.print("bitrate     ");Serial.println(info);
+}
+void audio_commercial(const char *info){  //duration in sec
+    Serial.print("commercial  ");Serial.println(info);
+}
+void audio_icyurl(const char *info){  //homepage
+    Serial.print("icyurl      ");Serial.println(info);
+}
+void audio_lasthost(const char *info){  //stream URL played
+    Serial.print("lasthost    ");Serial.println(info);
 }
