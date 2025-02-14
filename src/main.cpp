@@ -7,6 +7,7 @@
 #include "Wrapper.h"
 
 
+// #include "Accelerometer.cpp"
 
 
 WiFiMulti wifiMulti;
@@ -19,9 +20,21 @@ void setup() {
     Serial.begin(115200);
     my_alarm = new Alarm(uint8_t(I2S_BCLK),uint8_t(I2S_LRC), uint8_t(I2S_DOUT), &audioC);
     modem.begin();
+    // accelerometer = new Accelerometer();
+    // accelerometer->start_adxl();
+    // attachInterrupt(MOVED_OUTPUT, accelerometer->moved, CHANGE);
 }
 
 void loop()
 {
+    my_alarm->ring();
+    /*
+    if (accelerometer->g_moved) {
+        my_alarm->ring();
+        delay(10000);
+        my_alarm->stop();
+    }
+        */
+    
 }
 

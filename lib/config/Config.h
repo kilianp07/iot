@@ -12,11 +12,23 @@ const String SOUND_FILEPATH = "/sound/alarm.mp3";
 
 
 // I2S Pin assignments for XIAO ESP32C3
-#define SPI_MOSI       7   // SPI MOSI
-#define SPI_SCK        6   // SPI SCK
-#define I2S_DOUT       4   // I2S data out
-#define I2S_BCLK       5   // I2S bit clock
-#define I2S_LRC        3   // I2S left-right clock
+// #define SPI_MOSI       7   // SPI MOSI
+// #define SPI_SCK        6   // SPI SCK
+#define I2S_DOUT       9   // I2S data out
+#define I2S_BCLK       8   // I2S bit clock
+#define I2S_LRC        7   // I2S left-right clock
+
+// ADXL345
+#define ADXL_ADDR     0x53
+#define POWER_CTL     0x2D
+#define DEVICE_ID     0x00
+#define THRESH_ACT    0x24 
+#define ACT_INACT_CTL 0x27
+#define INT_SOURCE    0x30
+#define INT_ENABLE    0x2E
+#define DATA_X0       0x32
+
+#define MOVED_OUTPUT  D2
 
 
 // Modem Related
