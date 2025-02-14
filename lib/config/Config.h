@@ -18,4 +18,15 @@ const String SOUND_FILEPATH = "/sound/alarm.mp3";
 #define I2S_BCLK       5   // I2S bit clock
 #define I2S_LRC        3   // I2S left-right clock
 
+
+// Modem Related
+#define MODEM_RX_PIN 7
+#define MODEM_TX_PIN 6
+
+#define APN "TM"
+#define USER ""
+#define PASS ""
+
+#define PHONE_NUMBER "+33"
+
 #endif
