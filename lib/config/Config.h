@@ -10,12 +10,9 @@ const uint8_t AUDIO_VOLUME = 5;
 const String SOUND_FILEPATH = "/sound/alarm.mp3";
 
 
-
 // I2S Pin assignments for XIAO ESP32C3
-// #define SPI_MOSI       7   // SPI MOSI
-// #define SPI_SCK        6   // SPI SCK
-#define I2S_DOUT       9   // I2S data out
-#define I2S_BCLK       8   // I2S bit clock
+#define I2S_DOUT       8   // I2S data out
+#define I2S_BCLK       44   // I2S bit clock
 #define I2S_LRC        7   // I2S left-right clock
 
 // ADXL345
@@ -27,13 +24,14 @@ const String SOUND_FILEPATH = "/sound/alarm.mp3";
 #define INT_SOURCE    0x30
 #define INT_ENABLE    0x2E
 #define DATA_X0       0x32
+#define INT_INPUT     D2
 
-#define MOVED_OUTPUT  D2
+#define MOVED_OUTPUT  D3
 
 
 // Modem Related
-#define MODEM_RX_PIN 7
-#define MODEM_TX_PIN 6
+#define MODEM_RX_PIN 3
+#define MODEM_TX_PIN 2
 
 #define APN "TM"
 #define USER ""
