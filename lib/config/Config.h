@@ -12,10 +12,13 @@ const String SOUND_FILEPATH = "/sound/alarm.mp3";
 
 // I2S Pin assignments for XIAO ESP32C3
 #define I2S_DOUT       8   // I2S data out
-#define I2S_BCLK       44   // I2S bit clock
+#define I2S_BCLK       9  // I2S bit clock
 #define I2S_LRC        7   // I2S left-right clock
 
-// ADXL345
+// ADXL345 uses :
+// SDA/SCL 
+// 3V3/GND
+// D3
 #define ADXL_ADDR     0x53
 #define POWER_CTL     0x2D
 #define DEVICE_ID     0x00
@@ -24,8 +27,6 @@ const String SOUND_FILEPATH = "/sound/alarm.mp3";
 #define INT_SOURCE    0x30
 #define INT_ENABLE    0x2E
 #define DATA_X0       0x32
-#define INT_INPUT     D2
-
 #define MOVED_OUTPUT  D3
 
 

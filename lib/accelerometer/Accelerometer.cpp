@@ -24,9 +24,6 @@ Accelerometer::Accelerometer() {
 
     // Affecte l'instance de la classe pour l'utiliser dans la méthode statique
     instance = this;
-
-    pinMode(INT_INPUT, INPUT_PULLUP);
-    attachInterrupt(digitalPinToInterrupt(INT_INPUT), movedInterruptHandler, RISING);
 }
 
 void Accelerometer::i2c_write(uint8_t slave_addr, uint8_t reg, uint8_t val) {

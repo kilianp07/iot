@@ -26,7 +26,7 @@ void setup() {
   Wire.begin();
 
   Serial.println("Starting GPS");
-  gpsSerial.begin(9600, SERIAL_8N1, D2, D3);
+  gpsSerial.begin(9600, SERIAL_8N1, D7, D6);
   if (gpsSerial.available() > 0) {
     Serial.write("GPS Ready");
   }
@@ -38,16 +38,17 @@ void setup() {
   accelerometer = new Accelerometer(); 
 
   Serial.println("Starting modem");
-  modem.begin();
+  // modem.begin();
   // Utiliser +33
-  String phone = "";
-  String mess = "rend mon quad ";
+  // String phone = "";
+  // String mess = "rend mon quad ";
   
   delay(200);
 }
 
 void loop()
 {
+  Serial.write(gpsSerial.read());
   uint8_t buff;
   accelerometer->i2c_read_multiple_bytes(ADXL_ADDR, INT_SOURCE, &buff, 1);
   if (buff == 147) {
@@ -55,10 +56,10 @@ void loop()
     accelerometer->g_moved = false;
     accelerometer->checkInterruptSource();
     // modem.sendsms(phone, mess);
-    Serial.println(gpsSerial.read());
     my_alarm->ring();
     delay(10000);
     my_alarm->stop();
   }
+  delay(10);
 }
 
