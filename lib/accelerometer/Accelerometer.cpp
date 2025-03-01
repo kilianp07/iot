@@ -47,7 +47,6 @@ void IRAM_ATTR Accelerometer::movedInterruptHandler() {
     // Vérifie si l'instance est valide et modifie la variable d'état
     if (instance) {
         instance->g_moved = true;
-        Serial.println("Interrupt Triggered!");  // Affichage du message lors de l'interruption
     }
 }
 

@@ -39,6 +39,8 @@ const String SOUND_FILEPATH = "/sound/alarm.mp3";
 // ESP32S3 - Pin assignments
 #define MOVED_OUTPUT  D3
 // + SDA/SCL
+// other
+#define MOVEMENT_DETECTED 147
 
 
 // MODEM

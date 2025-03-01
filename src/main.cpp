@@ -26,6 +26,8 @@ void setup() {
   gpsSerial.begin(9600, SERIAL_8N1, D7, D6);
   if (gpsSerial.available() > 0) {
     Serial.write("GPS Ready");
+  } else {
+    Serial.println("WARNING: GPS not responding");
   }
   
   Serial.println("Starting alarm");
@@ -42,10 +44,19 @@ void setup() {
 
 void loop()
 {
-  Serial.write(gpsSerial.read());
+  while (gpsSerial.available() > 0) {
+    if (gps.encode(gpsSerial.read())) {
+      if (gps.location.isValid()) {
+        Serial.print("Location: ");
+        Serial.print(gps.location.lat(), 6);
+        Serial.print(", ");
+        Serial.println(gps.location.lng(), 6);
+      }
+    }
+  }
   uint8_t buff;
   accelerometer->i2c_read_multiple_bytes(ADXL_ADDR, INT_SOURCE, &buff, 1);
-  if (buff == 147) {
+  if (buff == MOVEMENT_DETECTED) {
     Serial.println("The accelerometer moved.");
     accelerometer->g_moved = false;
     accelerometer->checkInterruptSource();
