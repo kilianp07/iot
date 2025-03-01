@@ -17,13 +17,13 @@ private:
     const char* apn;
     const char* user;
     const char* pass;
+    bool sendSMS(const String &phoneNumber, const String &message);
 
 public:
     SIM7000Wrapper(HardwareSerial &serialPort, uint8_t rx, uint8_t tx, 
                    const char* server, int port, const char* apn, const char* user, const char* pass);
 
     bool begin();
-    bool sendSMS(const String &phoneNumber, const String &message);
     void sendsms(const String &phoneNumber, const String &message);
     String httpRequest(const String &url, const String &payload, const String &method, bool useHTTPS);
 };

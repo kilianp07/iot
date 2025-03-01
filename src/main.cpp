@@ -1,27 +1,70 @@
 #include <Arduino.h>
-#include "Config.h"
-#include "SPIFFS.h"
-#include "Audio.h"
-#include "Alarm.h"
-#include "WiFiMulti.h"
-#include "Wrapper.h"
+#include <Config.h>
+#include <SPIFFS.h>
+#include <Audio.h>
+#include <Alarm.h>
+#include <Wrapper.h>
+#include <Accelerometer.h>
+#include <Wire.h>
+#include <TinyGPS++.h>
 
 
-
-
-WiFiMulti wifiMulti;
 Alarm *my_alarm;
 Audio audioC;
 HardwareSerial simSerial(1);
 SIM7000Wrapper modem(simSerial, MODEM_RX_PIN, MODEM_TX_PIN, "", 0, APN, USER, PASS);
+Accelerometer *accelerometer;
+TinyGPSPlus gps;
+HardwareSerial gpsSerial(2);
+
 
 void setup() {
-    Serial.begin(115200);
-    my_alarm = new Alarm(uint8_t(I2S_BCLK),uint8_t(I2S_LRC), uint8_t(I2S_DOUT), &audioC);
-    modem.begin();
+  Serial.begin(115200);
+  Wire.begin();
+
+  Serial.println("Starting GPS");
+  gpsSerial.begin(9600, SERIAL_8N1, D7, D6);
+  if (gpsSerial.available() > 0) {
+    Serial.write("GPS Ready");
+  } else {
+    Serial.println("WARNING: GPS not responding");
+  }
+  
+  Serial.println("Starting alarm");
+  my_alarm = new Alarm(uint8_t(I2S_BCLK), uint8_t(I2S_LRC), uint8_t(I2S_DOUT), &audioC);
+ 
+  Serial.println("Starting accelerometer");
+  accelerometer = new Accelerometer(); 
+
+  Serial.println("Starting modem");
+  // modem.begin();
+  
+  delay(200);
 }
 
 void loop()
 {
+  while (gpsSerial.available() > 0) {
+    if (gps.encode(gpsSerial.read())) {
+      if (gps.location.isValid()) {
+        Serial.print("Location: ");
+        Serial.print(gps.location.lat(), 6);
+        Serial.print(", ");
+        Serial.println(gps.location.lng(), 6);
+      }
+    }
+  }
+  uint8_t buff;
+  accelerometer->i2c_read_multiple_bytes(ADXL_ADDR, INT_SOURCE, &buff, 1);
+  if (buff == MOVEMENT_DETECTED) {
+    Serial.println("The accelerometer moved.");
+    accelerometer->g_moved = false;
+    accelerometer->checkInterruptSource();
+    // modem.sendsms(PHONE_NUMBER, MESSAGE);
+    my_alarm->ring();
+    delay(10000);
+    my_alarm->stop();
+  }
+  delay(10);
 }
 

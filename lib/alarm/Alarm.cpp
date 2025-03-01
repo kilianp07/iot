@@ -15,8 +15,6 @@ Alarm::Alarm(uint8_t BCLK, uint8_t LRC, uint8_t DOUT, Audio* audioC) {
         Serial.println("An Error has occurred while mounting SPIFFS");
         return;
     }
-
-    audio->connecttoFS(SPIFFS, SOUND_FILEPATH.c_str());
 }
 
 void Alarm::ring(void) {
