@@ -3,15 +3,12 @@
 #include <SPIFFS.h>
 #include <Audio.h>
 #include <Alarm.h>
-#include <WiFiMulti.h>
 #include <Wrapper.h>
 #include <Accelerometer.h>
 #include <Wire.h>
 #include <TinyGPS++.h>
 
 
-
-WiFiMulti wifiMulti;
 Alarm *my_alarm;
 Audio audioC;
 HardwareSerial simSerial(1);
@@ -39,9 +36,6 @@ void setup() {
 
   Serial.println("Starting modem");
   // modem.begin();
-  // Utiliser +33
-  // String phone = "";
-  // String mess = "rend mon quad ";
   
   delay(200);
 }
@@ -55,7 +49,7 @@ void loop()
     Serial.println("The accelerometer moved.");
     accelerometer->g_moved = false;
     accelerometer->checkInterruptSource();
-    // modem.sendsms(phone, mess);
+    // modem.sendsms(PHONE_NUMBER, MESSAGE);
     my_alarm->ring();
     delay(10000);
     my_alarm->stop();
