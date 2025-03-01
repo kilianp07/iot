@@ -16,6 +16,7 @@ SIM7000Wrapper modem(simSerial, MODEM_RX_PIN, MODEM_TX_PIN, "", 0, APN, USER, PA
 Accelerometer *accelerometer;
 TinyGPSPlus gps;
 HardwareSerial gpsSerial(2);
+uint8_t buff;
 
 
 void setup() {
@@ -44,26 +45,16 @@ void setup() {
 
 void loop()
 {
-  while (gpsSerial.available() > 0) {
-    if (gps.encode(gpsSerial.read())) {
-      if (gps.location.isValid()) {
-        Serial.print("Location: ");
-        Serial.print(gps.location.lat(), 6);
-        Serial.print(", ");
-        Serial.println(gps.location.lng(), 6);
-      }
-    }
-  }
-  uint8_t buff;
   accelerometer->i2c_read_multiple_bytes(ADXL_ADDR, INT_SOURCE, &buff, 1);
   if (buff == MOVEMENT_DETECTED) {
     Serial.println("The accelerometer moved.");
-    accelerometer->g_moved = false;
-    accelerometer->checkInterruptSource();
-    // modem.sendsms(PHONE_NUMBER, MESSAGE);
+    Serial.print(gpsSerial.read());
     my_alarm->ring();
+    // modem.sendsms(PHONE_NUMBER, MESSAGE);
     delay(10000);
     my_alarm->stop();
+    // On lit l'adresse pour éviter de relancer directement la boucle 
+    accelerometer->i2c_read_multiple_bytes(ADXL_ADDR, INT_SOURCE, &buff, 1);
   }
   delay(10);
 }
