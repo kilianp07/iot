@@ -54,4 +54,6 @@ const String SOUND_FILEPATH = "/sound/alarm.mp3";
 #define PHONE_NUMBER "+33"
 #define MESSAGE "a"
 
+#define APIURL "http://athleteiq.fr/position"
+
 #endif

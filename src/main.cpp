@@ -7,7 +7,7 @@
 #include <Accelerometer.h>
 #include <Wire.h>
 #include <TinyGPS++.h>
-
+#include <PositionClient.h>
 
 Alarm *my_alarm;
 Audio audioC;
@@ -17,6 +17,8 @@ Accelerometer *accelerometer;
 TinyGPSPlus gps;
 HardwareSerial gpsSerial(2);
 uint8_t buff;
+PositionClient* positionClient;
+Position position;
 
 
 void setup() {
@@ -39,16 +41,51 @@ void setup() {
 
   Serial.println("Starting modem");
   // modem.begin();
+
+  const char* url = APIURL;
+  positionClient = new PositionClient(url);
   
   delay(200);
 }
 
 void loop()
 {
+  if (gpsSerial.available() > 0) {
+    if (gps.location.isValid()) {
+      position.latitude = gps.location.lat();
+      position.longitude = gps.location.lng();
+      positionClient->postPosition(position);
+    }
+    /*
+    if (gps.(gpsSerial.readStringUntil('\n'))) {
+      if (gps.location.isValid()) {
+        position.latitude = gps.location.lat();
+        position.longitude = gps.location.lng();
+        positionClient.postPosition(position);
+      }
+    }
+    */
+  }
   accelerometer->i2c_read_multiple_bytes(ADXL_ADDR, INT_SOURCE, &buff, 1);
   if (buff == MOVEMENT_DETECTED) {
     Serial.println("The accelerometer moved.");
-    Serial.print(gpsSerial.read());
+    /*
+    if (gpsSerial.available() > 0) {
+      if (gps.location.isValid()) {
+        position.latitude = gps.location.lat();
+        position.longitude = gps.location.lng();
+        // positionClient.postPosition(position);
+      }
+      
+      if (gps.encode(gpsSerial.readStringUntil('\n'))) {
+        if (gps.location.isValid()) {
+          position.latitude = gps.location.lat();
+          position.longitude = gps.location.lng();
+          positionClient.postPosition(position);
+        }
+      }
+    }
+    */
     my_alarm->ring();
     // modem.sendsms(PHONE_NUMBER, MESSAGE);
     delay(10000);
@@ -56,6 +93,7 @@ void loop()
     // On lit l'adresse pour éviter de relancer directement la boucle 
     accelerometer->i2c_read_multiple_bytes(ADXL_ADDR, INT_SOURCE, &buff, 1);
   }
-  delay(10);
+
+  delay(1000);
 }
 
