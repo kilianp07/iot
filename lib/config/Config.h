@@ -8,7 +8,7 @@ GPIO3 -> RX Model
 GPIO4 -> INT1 ADXL345
 SDA   -> ADXL345
 SCL   -> ADXL345
-TX    -> RX GPS
+TX    -> 
 
 5V 
 GND

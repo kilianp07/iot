@@ -46,14 +46,19 @@ void loop() {
   if (buff == MOVEMENT_DETECTED) {
     Serial.println("The accelerometer moved");
     my_alarm->ring();
-    Serial.println(gps.location.lat());
-    Serial.println(gps.location.lng());
-    position.latitude = gps.location.lat();
-    position.longitude = gps.location.lng();
-    size_t data = positionClient.postPosition(position);
-    modem.httpRequest(APIURL, String(data), "POST", false);
     modem.sendsms(PHONE_NUMBER, MESSAGE);
-    delay(5000);
+    Serial.println("Récupération des coordonnées GPS");
+    if (gpsSerial.available() > 0) {
+      if (gps.encode(gpsSerial.read())) {
+        Serial.println(gps.location.lat());
+        Serial.println(gps.location.lng());
+        position.latitude = gps.location.lat();
+        position.longitude = gps.location.lng();
+        String data = positionClient.postPosition(position);
+        modem.httpRequest(APIURL, String(data), "POST", false);
+      }
+    }
+    delay(1000);
     my_alarm->stop();
     accelerometer->i2c_read_multiple_bytes(ADXL_ADDR, INT_SOURCE, &buff, 1);
   }

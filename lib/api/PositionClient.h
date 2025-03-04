@@ -14,7 +14,7 @@ struct Position {
 
 class PositionClient {
 public:
-    size_t postPosition(const Position& pos);
+    String postPosition(const Position& pos);
 };
 
 
