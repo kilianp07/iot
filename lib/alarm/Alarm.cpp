@@ -27,7 +27,6 @@ void Alarm::ring(void) {
     }
 }
 
-
 void Alarm::loop(void *param) {
     Alarm *alarm = (Alarm *)param;  // Convertir le pointeur générique en `Alarm*`
 
@@ -45,8 +44,6 @@ void Alarm::loop(void *param) {
     }
 }
 
-
-
 void Alarm::stop(void) {
     if (this->xHandle != NULL) {  
         vTaskDelete(this->xHandle);
@@ -58,12 +55,8 @@ void Alarm::stop(void) {
     }
 }
 
-
 void Alarm::restart() {
     Serial.println("Relancement du MP3...");
     this->audio->connecttoFS(SPIFFS, SOUND_FILEPATH.c_str());  // Relancer la lecture
     this->isPlaying = true;
 }
-
-
-
