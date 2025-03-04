@@ -11,14 +11,6 @@ class Accelerometer {
         
     public: 
         Accelerometer();
-        static volatile bool g_moved;
-        
-        // Fonction statique pour l'interruption
-        static void IRAM_ATTR movedInterruptHandler();  // Attribut IRAM pour une ISR rapide
-        
-        void checkInterruptSource();
-
-        // A mettre en private
         void i2c_read_multiple_bytes(uint8_t slave_addr, uint8_t reg, uint8_t *buff, size_t len);
 
 };

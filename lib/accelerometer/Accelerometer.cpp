@@ -3,12 +3,8 @@
 #include "Config.h"
 #include <Arduino.h>
 
-Accelerometer* Accelerometer::instance = nullptr;
-volatile bool Accelerometer::g_moved = false;
-
 Accelerometer::Accelerometer() {  
     uint8_t buff;
-    g_moved = false;
 
     // Initialisation I2C du capteur
     this->i2c_read_multiple_bytes(ADXL_ADDR, POWER_CTL, &buff, 1);
@@ -21,9 +17,6 @@ Accelerometer::Accelerometer() {
     this->i2c_write(ADXL_ADDR, INT_ENABLE, buff | 0b00010000);
     
     this->i2c_read_multiple_bytes(ADXL_ADDR, INT_SOURCE, &buff, 1);
-
-    // Affecte l'instance de la classe pour l'utiliser dans la méthode statique
-    instance = this;
 }
 
 void Accelerometer::i2c_write(uint8_t slave_addr, uint8_t reg, uint8_t val) {
@@ -40,17 +33,4 @@ void Accelerometer::i2c_read_multiple_bytes(uint8_t slave_addr, uint8_t reg, uin
   
     Wire.requestFrom(slave_addr, len);
     Wire.readBytes(buff, len);
-}
-
-// Fonction statique pour l'interruption
-void IRAM_ATTR Accelerometer::movedInterruptHandler() {
-    // Vérifie si l'instance est valide et modifie la variable d'état
-    if (instance) {
-        instance->g_moved = true;
-    }
-}
-
-void Accelerometer::checkInterruptSource() {
-    uint8_t buff;
-    i2c_read_multiple_bytes(ADXL_ADDR, INT_SOURCE, &buff, 1);
 }
