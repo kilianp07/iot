@@ -1,7 +1,7 @@
 # Projet : Cadena connecté
 
-Groupe : 
-PEYRON Kilian 
+Groupe :  
+PEYRON Kilian  
 MEIGNIER Tanguy
 
 ![Schema des connexions](schema/iot.drawio.png)
