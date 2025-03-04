@@ -1,29 +1,14 @@
 #include "PositionClient.h"
 #include <WiFi.h>
-#include <HTTPClient.h>
+#include <ArduinoHttpClient.h>
 #include <ArduinoJson.h>
+#include <Client.h>
 
-PositionClient::PositionClient(const char* serverUrl) : _serverUrl(serverUrl) {}
+size_t PositionClient::postPosition(const Position& pos) {
+    StaticJsonDocument<200> jsonDoc;
+    jsonDoc["latitude"] = pos.latitude;
+    jsonDoc["longitude"] = pos.longitude;
 
-void PositionClient::postPosition(const Position& pos) {
-    if (WiFi.status() == WL_CONNECTED) {
-        HTTPClient http;
-        http.begin(_serverUrl);
-        http.addHeader("Content-Type", "application/json");
-
-        StaticJsonDocument<200> jsonDoc;
-        jsonDoc["latitude"] = pos.latitude;
-        jsonDoc["longitude"] = pos.longitude;
-
-        String jsonString;
-        serializeJson(jsonDoc, jsonString);
-
-        int httpResponseCode = http.POST(jsonString);
-        Serial.print("Réponse du serveur: ");
-        Serial.println(httpResponseCode);
-
-        http.end();
-    } else {
-        Serial.println("WiFi non connecté");
-    }
+    String jsonString;
+    return serializeJson(jsonDoc, jsonString);
 }

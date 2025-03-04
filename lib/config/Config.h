@@ -23,9 +23,9 @@ RX    -> TX GPS
 const uint8_t AUDIO_VOLUME = 5;
 const String SOUND_FILEPATH = "/sound/alarm.mp3";
 // ESP32S3 - I2S Pin assignments
-#define I2S_DOUT      8  // I2S data out
-#define I2S_BCLK      9  // I2S bit clock
-#define I2S_LRC       7  // I2S left-right clock
+#define I2S_DOUT      7  // I2S data out
+#define I2S_BCLK      8  // I2S bit clock
+#define I2S_LRC       9  // I2S left-right clock
 
 // ADXL345 - Accelerometer :
 #define ADXL_ADDR     0x53
@@ -52,7 +52,7 @@ const String SOUND_FILEPATH = "/sound/alarm.mp3";
 #define PASS ""
 
 #define PHONE_NUMBER "+33"
-#define MESSAGE "a"
+#define MESSAGE "The lock moved. http://athleteiq.fr"
 
 #define APIURL "http://athleteiq.fr/position"
 

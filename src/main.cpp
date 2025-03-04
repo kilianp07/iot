@@ -11,89 +11,51 @@
 
 Alarm *my_alarm;
 Audio audioC;
+Accelerometer *accelerometer;
+uint8_t buff;
 HardwareSerial simSerial(1);
 SIM7000Wrapper modem(simSerial, MODEM_RX_PIN, MODEM_TX_PIN, "", 0, APN, USER, PASS);
-Accelerometer *accelerometer;
 TinyGPSPlus gps;
 HardwareSerial gpsSerial(2);
-uint8_t buff;
-PositionClient* positionClient;
+PositionClient positionClient;
 Position position;
-
 
 void setup() {
   Serial.begin(115200);
   Wire.begin();
-
-  Serial.println("Starting GPS");
-  gpsSerial.begin(9600, SERIAL_8N1, D7, D6);
-  if (gpsSerial.available() > 0) {
-    Serial.write("GPS Ready");
-  } else {
-    Serial.println("WARNING: GPS not responding");
-  }
-  
-  Serial.println("Starting alarm");
+  delay(3000);
+  Serial.println("---SETUP---");
+  delay(1000);
+  Serial.println("Starting alarm....");
   my_alarm = new Alarm(uint8_t(I2S_BCLK), uint8_t(I2S_LRC), uint8_t(I2S_DOUT), &audioC);
- 
-  Serial.println("Starting accelerometer");
+  delay(1000);
+  Serial.println("Starting accelerometer...");
   accelerometer = new Accelerometer(); 
+  delay(1000);
+  Serial.println("Starting modem...");
+  modem.begin();
+  delay(1000);
+  Serial.println("Starting gps...");
+  gpsSerial.begin(9600, SERIAL_8N1, D7, D6);
 
-  Serial.println("Starting modem");
-  // modem.begin();
-
-  const char* url = APIURL;
-  positionClient = new PositionClient(url);
-  
-  delay(200);
+  Serial.println("---LOOP---");
 }
 
-void loop()
-{
-  if (gpsSerial.available() > 0) {
-    if (gps.location.isValid()) {
-      position.latitude = gps.location.lat();
-      position.longitude = gps.location.lng();
-      positionClient->postPosition(position);
-    }
-    /*
-    if (gps.(gpsSerial.readStringUntil('\n'))) {
-      if (gps.location.isValid()) {
-        position.latitude = gps.location.lat();
-        position.longitude = gps.location.lng();
-        positionClient.postPosition(position);
-      }
-    }
-    */
-  }
+void loop() {
   accelerometer->i2c_read_multiple_bytes(ADXL_ADDR, INT_SOURCE, &buff, 1);
   if (buff == MOVEMENT_DETECTED) {
-    Serial.println("The accelerometer moved.");
-    /*
-    if (gpsSerial.available() > 0) {
-      if (gps.location.isValid()) {
-        position.latitude = gps.location.lat();
-        position.longitude = gps.location.lng();
-        // positionClient.postPosition(position);
-      }
-      
-      if (gps.encode(gpsSerial.readStringUntil('\n'))) {
-        if (gps.location.isValid()) {
-          position.latitude = gps.location.lat();
-          position.longitude = gps.location.lng();
-          positionClient.postPosition(position);
-        }
-      }
-    }
-    */
+    Serial.println("The accelerometer moved");
     my_alarm->ring();
-    // modem.sendsms(PHONE_NUMBER, MESSAGE);
-    delay(10000);
+    Serial.println(gps.location.lat());
+    Serial.println(gps.location.lng());
+    position.latitude = gps.location.lat();
+    position.longitude = gps.location.lng();
+    size_t data = positionClient.postPosition(position);
+    modem.httpRequest(APIURL, String(data), "POST", false);
+    modem.sendsms(PHONE_NUMBER, MESSAGE);
+    delay(5000);
     my_alarm->stop();
-    // On lit l'adresse pour éviter de relancer directement la boucle 
     accelerometer->i2c_read_multiple_bytes(ADXL_ADDR, INT_SOURCE, &buff, 1);
   }
-
-  delay(1000);
+  delay(100);
 }
-
